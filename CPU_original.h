@@ -23,26 +23,6 @@ struct instruction {
 	unsigned int Addr;			// mem. address
 };
 
-struct instruction2 {
-	//ID-EX and PC holds 2 instructions at first, so we must be able to store each
-
-	//Instruction 1
-	unsigned char type1;			// see above
-	unsigned char sReg_a1;		// 1st operand
-	unsigned char sReg_b1;		// 2nd operand
-	unsigned char dReg1;			// dest. operand
-	unsigned int PC1;			// program counter
-	unsigned int Addr1;			// mem. address
-
-	//Instruction 2
-	unsigned char type22;			// see above
-	unsigned char sReg_a2;		// 1st operand
-	unsigned char sReg_b2;		// 2nd operand
-	unsigned char dReg2;			// dest. operand
-	unsigned int PC2;			// program counter
-	unsigned int Addr2;			// mem. address
-};
-
 #endif
 
 #define TRACE_BUFSIZE 1024*1024
