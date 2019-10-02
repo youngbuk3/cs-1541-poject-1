@@ -1,8 +1,8 @@
 ﻿/**************************************************************/
-/* CS/COE 1541				 			
-   compile with gcc -o Superscaler Superscaler.c			
-   and execute using							
-   ./Superscaler  /afs/cs.pitt.edu/courses/1541/short_traces/sample.tr	0  
+/* CS/COE 1541
+   compile with gcc -o superscaler superscaler.c
+   and execute using
+   ./Superscaler  /afs/cs.pitt.edu/courses/1541/short_traces/sample.tr	0
 ***************************************************************/
 
 #include <stdio.h>
