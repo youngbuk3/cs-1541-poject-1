@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include<stdlib.h>
 #include <inttypes.h>
-#include <arpa/inet.h>
+//#include <arpa/inet.h>
+#include <winsock2.h>
 #include "CPU.h" 
 
 int main(int argc, char **argv)
