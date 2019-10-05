@@ -24,8 +24,8 @@ and execute using
 #include "CPU.h"
 
 int main(int argc, char ** argv) {
-	struct instruction * tr_entry, *tr_entry2;
-	struct instruction PCregister, PCregister_B, IF_ID_A, IF_ID_B, ID_EX1, ID_EX2, EX_MEM1, EX_MEM2, MEM_WB1, MEM_WB2;
+	struct instruction * tr_entry, *tr_entry2, *temp_inst;
+	struct instruction PCregister, PCregister_B, te, IF_ID_A, IF_ID_B, ID_EX1, ID_EX2, EX_MEM1, EX_MEM2, MEM_WB1, MEM_WB2;
 	size_t size, size2;
 	char * trace_file_name;
 	int trace_view_on = 0;
@@ -77,6 +77,9 @@ int main(int argc, char ** argv) {
 			//This ensures that the next instruction is only put into the pipe if the 2 previous ones were pushed through the pipe
 			if (!replaceA) {
 				IF_ID_A = PCregister;
+			} else {
+				IF_ID_A = te;
+				free(temp_inst);
 			}
 
 			IF_ID_B = PCregister_B;
@@ -91,9 +94,28 @@ int main(int argc, char ** argv) {
 				if ((tr_entry -> type != ti_STORE || tr_entry -> type != ti_LOAD) && (tr_entry2 -> type != ti_STORE || tr_entry2 -> type != ti_LOAD)) {
 					//Both are ALU/Branch instructions, only the first can go through
 					memcpy(&PCregister, tr_entry, sizeof(PCregister));
-					tr_entry = tr_entry2;
+					
+					//Set the next instruction to be the instruction that couldn't get through, but becasue of pointers, we can't just set it equal to each other
+					char t, a, b, d;
+					int p, ad;
+					t = tr_entry2 -> type;
+					a = tr_entry2 -> sReg_a;
+					b = tr_entry2 -> sReg_b;
+					d = tr_entry2 -> dReg;
+					p = tr_entry2 ->PC;
+					ad = tr_entry2 -> Addr;
+					temp_inst = malloc(sizeof(tr_entry));
+					temp_inst -> type = t;
+					temp_inst -> sReg_a = a;
+					temp_inst -> sReg_b = b;
+					temp_inst -> dReg = d;
+					temp_inst -> PC = p;
+					temp_inst -> Addr = ad;
+					temp_inst = malloc(sizeof(tr_entry));
 					tr_entry2 -> type = ti_NOP;
 					memcpy(&PCregister_B, tr_entry2, sizeof(PCregister_B));
+					memcpy(&PCregister, tr_entry, sizeof(PCregister));
+					memcpy(&te, temp_inst, sizeof(te));
 					replaceA = true;
 				} else if ((tr_entry -> type != ti_STORE || tr_entry -> type != ti_LOAD) && (tr_entry2 -> type == ti_STORE || tr_entry2 -> type == ti_LOAD)) {
 					//Instruction 1 is ALU/Branch and instruction 2 is LW/SW, set instruction 1 to go through pipeline A and instruction 2 to go through pipeline B
@@ -110,10 +132,30 @@ int main(int argc, char ** argv) {
 					tr_entry2 -> type = ti_NOP;
 					memcpy(&PCregister_B, tr_entry2, sizeof(PCregister_B));
 					replaceA = true;
-				} 
-				//-----------------------------------------WHAT ABOUT THE OTHER INSTRUCTIONS LIKE J, THEY'RE NOT MENTIONED IN THE PDF, WHICH PIPE DO THEY GO DOWN?----------
 
-				//memcpy(&PCregister, tr_entry , sizeof(PCregister));
+
+					char t, a, b, d;
+					int p, ad;
+					t = tr_entry2 -> type;
+					a = tr_entry2 -> sReg_a;
+					b = tr_entry2 -> sReg_b;
+					d = tr_entry2 -> dReg;
+					p = tr_entry2 ->PC;
+					ad = tr_entry2 -> Addr;
+					temp_inst = malloc(sizeof(tr_entry));
+					temp_inst -> type = t;
+					temp_inst -> sReg_a = a;
+					temp_inst -> sReg_b = b;
+					temp_inst -> dReg = d;
+					temp_inst -> PC = p;
+					temp_inst -> Addr = ad;
+					temp_inst = malloc(sizeof(tr_entry));
+					tr_entry2 -> type = ti_NOP;
+					memcpy(&PCregister, tr_entry, sizeof(PCregister));
+					memcpy(&PCregister_B, tr_entry2, sizeof(PCregister_B));
+					memcpy(&te, temp_inst, sizeof(te));
+					replaceA = true;
+				} 
 			}
 
 			//printf("==============================================================================\n");
