@@ -8,7 +8,15 @@ The program takes the name of the file to be generated as an argument.
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
-#include <arpa/inet.h>
+#ifdef _WIN32
+
+	#include <winsock2.h>
+
+#else
+
+  #include <arpa/inet.h>
+
+#endif
 #include "CPU.h" 
 
 int main(int argc, char **argv)
